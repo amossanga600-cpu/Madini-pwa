@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madini Tracker PWA</title>
+    <style>
+        :root {
+            --primary: #d97706;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-left: 6px solid var(--primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .pass-no {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #0f172a;
+        }
+
+        .status {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .card-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-group label {
+            font-size: 0.75rem;
+            color: #64748b;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .info-group span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        #loading {
+            font-weight: bold;
+            color: #64748b;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🔨 Madini Tracker</h1>
+        <p style="margin: 0 0 12px 0; color: #64748b; font-size: 0.9rem;">Mfumo wa Pasi na Usafiri</p>
+        <input type="text" id="searchInput" class="search-box" placeholder="Tafuta namba ya pasi, mgodi, au madini..." onkeyup="filterCards()">
+    </div>
+
+    <div id="loading">Inapakia data kutoka Google Sheets...</div>
+    <div id="cardsContainer" class="container"></div>
+
+    <script>
+        // Link yako ya Google Sheets (CSV) imewekwa hapa tayari:
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlBGH7Uu8VjO5UPT3pEtIZGvAMiIILqIXxlSWFyH46pDQCvnjR_sns5jFYJJJmkQ/pub?gid=1904855412&single=true&output=csv";
+
+        let allData = [];
+
+        async function fetchData() {
+            try {
+                const response = await fetch(SHEET_CSV_URL);
+                const dataText = await response.text();
+                
+                const rows = dataText.split('\n').map(row => row.split(','));
+                const headers = rows[0].map(h => h.trim());
+                
+                allData = rows.slice(1).filter(r => r.length > 1 && r[0] !== '').map(row => {
+                    let obj = {};
+                    headers.forEach((header, i) => {
+                        obj[header] = row[i] ? row[i].trim() : '';
+                    });
+                    return obj;
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                renderCards(allData);
+            } catch (error) {
+                document.getElementById('loading').innerText = "Imeshindikana kupakia data. Hakikisha Sheet yako ipo Public!";
+                console.error(error);
+            }
+        }
+
+        function renderCards(data) {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+
+            if(data.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#94a3b8;">Hakuna kumbukumbu (Data) zilizopatikana bado kwenye Sheet.</p>';
+                return;
+            }
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="pass-no">🎫 ${item['Namba ya pasi'] || 'N/A'}</span>
+                        <span class="status">${item['Hali ya pasi'] || 'Active'}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-group">
+                            <label>Eneo la Mgodi</label>
+                            <span>📍 ${item['Eneo la mgodi'] || '-'}</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Aina ya Madini</label>
+                            <span>💎 ${item['Aina ya madini'] || '-'}</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Uzito (Gram)</label>
+                            <span>⚖️ ${item['Uzito (gram)'] || '0'}g</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterCards() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allData.filter(item => {
+                return Object.values(item).some(val => val.toLowerCase().includes(query));
+            });
+            renderCards(filtered);
+        }
+
+        fetchData();
+    </script>
+</body>
+  </html>
