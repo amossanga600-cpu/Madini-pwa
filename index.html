@@ -3,439 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasi Usafiri & Madini Tracker</title>
-    <!-- Chart.js kwa ajili ya Analytics -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Mining OS - Complete Full Prototype</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --primary: #d97706;
-            --primary-light: #fef3c7;
-            --bg: #faf9f6;
-            --sidebar-bg: #ffffff;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-        }
-
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { margin: 0; padding: 0; background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
-
-        /* Sidebar Navigation */
-        .sidebar {
-            width: 240px;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 16px;
-            transition: transform 0.3s ease;
-        }
-        .sidebar-brand { font-size: 1.1rem; font-weight: bold; color: var(--primary); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
-        .nav-item {
-            display: flex; align-items: center; gap: 10px;
-            padding: 12px 16px; color: #64748b; text-decoration: none;
-            border-radius: 10px; font-size: 0.9rem; font-weight: 500;
-            margin-bottom: 4px; cursor: pointer;
-        }
-        .nav-item:hover, .nav-item.active { background-color: var(--primary-light); color: var(--primary); font-weight: bold; }
-
-        /* Main Content Layout */
-        .main-content { flex: 1; overflow-y: auto; padding: 24px; }
-        .page { display: none; }
-        .page.active { display: block; }
-
-        /* Summary Cards Header */
-        .welcome-card { background: #ffffff; border-radius: 12px; padding: 16px 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .stat-card { background: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border); }
-        .stat-card label { font-size: 0.75rem; color: #64748b; display: block; margin-bottom: 4px; }
-        .stat-card .value { font-size: 1.5rem; font-weight: bold; color: var(--text); }
-
-        /* Section & Controls */
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
-        .search-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; outline: none; width: 220px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
-        .btn:hover { opacity: 0.9; }
-
-        /* Table Design */
-        .table-container { background: white; border-radius: 12px; border: 1px solid var(--border); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
-        th { background: #f8fafc; padding: 12px 16px; color: #64748b; border-bottom: 1px solid var(--border); }
-        td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
-        tr:last-child td { border-bottom: none; }
-        .status-badge { background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
-
-        /* Charts Section */
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
-        .chart-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-
-        /* Modal Form */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-body { background: white; padding: 24px; border-radius: 16px; width: 90%; max-width: 450px; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 0.8rem; color: #64748b; margin-bottom: 4px; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 10px; }
-            .main-content { padding: 16px; }
-        }
+        .active-tab { border-bottom: 4px solid #f59e0b; color: #f59e0b; font-weight: bold; }
     </style>
 </head>
-<body>
+<body class="bg-gray-900 text-gray-100 font-sans pb-24">
 
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="sidebar-brand">📑 Pasi Usafiri</div>
-        <div class="nav-item active" onclick="switchPage('home', this)">🏠 Home</div>
-        <div class="nav-item" onclick="switchPage('pasi', this)">🚚 Pasi za usafiri</div>
-        <div class="nav-item" onclick="switchPage('bima', this)">🏷️ Bei na bima</div>
-        <div class="nav-item" onclick="switchPage('analytics', this)">📊 Analytics</div>
-        <div class="nav-item" onclick="switchPage('mchanganuo', this)">💵 Mchanganuo wa malipo</div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-
-        <!-- 1. HOME PAGE -->
-        <div id="page-home" class="page active">
-            <div class="welcome-card">
-                <small style="color: #64748b;">📅 <span id="currentDate"></span></small>
-                <h2 style="margin: 4px 0 0 0; color: var(--text);">Habari, Amosi Sanga</h2>
-                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem;">Tuanze na kazi za leo.</p>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <label>Jumla ya pasi</label>
-                    <div class="value" id="stat-total-pasi">0</div>
-                </div>
-                <div class="stat-card">
-                    <label>Jumla ya mchanganuo wa malipo</label>
-                    <div class="value" id="stat-total-malipo">0 TZS</div>
-                </div>
-            </div>
-
-            <div class="section-header">
-                <h3>Pasi za hivi karibuni</h3>
-                <input type="text" class="search-input" placeholder="Tafuta pasi..." onkeyup="filterTable('pasi-home-table', this.value)">
-            </div>
-
-            <div class="table-container">
-                <table id="pasi-home-table">
-                    <thead>
-                        <tr>
-                            <th>Namba ya pasi</th>
-                            <th>Eneo la mgodi</th>
-                            <th>Aina ya madini</th>
-                            <th>Uzito (gram)</th>
-                            <th>Hali ya pasi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-home-pasi"></tbody>
-                </table>
-            </div>
+    <!-- Header / Navbar -->
+    <header class="bg-gray-800 border-b border-gray-700 p-4 sticky top-0 z-50 flex justify-between items-center shadow-lg">
+        <div>
+            <h1 class="text-xl font-bold text-amber-500 tracking-wide">⛏️ MINING OS</h1>
+            <p class="text-xs text-gray-400">Offline-First Full Management System</p>
         </div>
-
-        <!-- 2. PASI ZA USAFIRI PAGE -->
-        <div id="page-pasi" class="page">
-            <div class="stats-grid">
-                <div class="stat-card"><label>Jumla ya pasi</label><div class="value" id="pasi-page-total">0</div></div>
-                <div class="stat-card"><label>Pasi zenye hali</label><div class="value" id="pasi-page-active">0</div></div>
-            </div>
-            <div class="section-header">
-                <h3>Pasi za usafiri (Orodha Kamili)</h3>
-                <div>
-                    <input type="text" class="search-input" placeholder="Tafuta pasi..." onkeyup="filterTable('pasi-full-table', this.value)">
-                    <button class="btn" onclick="openModal('pasiModal')">+ Add pasi</button>
-                </div>
-            </div>
-            <div class="table-container">
-                <table id="pasi-full-table">
-                    <thead>
-                        <tr>
-                            <th>Namba ya pasi</th>
-                            <th>Eneo la mgodi</th>
-                            <th>Aina ya madini</th>
-                            <th>Uzito (gram)</th>
-                            <th>Hali ya pasi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-full-pasi"></tbody>
-                </table>
-            </div>
+        <div class="flex items-center space-x-2">
+            <span class="inline-block w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-xs text-gray-300">Offline Ready</span>
         </div>
+    </header>
 
-        <!-- 3. BEI NA BIMA PAGE -->
-        <div id="page-bima" class="page">
-            <div class="stats-grid">
-                <div class="stat-card"><label>Aina za madini</label><div class="value" id="bima-total-types">3</div></div>
-                <div class="stat-card"><label>Zenye status ya bima</label><div class="value">Active</div></div>
-            </div>
-            <div class="section-header">
-                <h3>Bei na bima za madini</h3>
-                <div>
-                    <input type="text" class="search-input" placeholder="Tafuta aina ya madini..." onkeyup="filterTable('bima-table', this.value)">
-                    <button class="btn" onclick="openModal('bimaModal')">+ Add mineral reference</button>
+    <!-- Navigation Tabs -->
+    <nav class="bg-gray-800 border-b border-gray-700 flex justify-between text-xs md:text-sm overflow-x-auto whitespace-nowrap">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="py-3 px-4 active-tab">1. Dashibodi</button>
+        <button onclick="switchTab('labor')" id="tab-labor" class="py-3 px-4 text-gray-400">2. Vibarua & Shift</button>
+        <button onclick="switchTab('ledger')" id="tab-ledger" class="py-3 px-4 text-gray-400">3. Mapato & Matumizi</button>
+        <button onclick="switchTab('calculator')" id="tab-calculator" class="py-3 px-4 text-gray-400">4. Kikokotoo Faida</button>
+        <button onclick="switchTab('esg')" id="tab-esg" class="py-3 px-4 text-gray-400">5. ESG & Passports</button>
+        <button onclick="switchTab('p2p')" id="tab-p2p" class="py-3 px-4 text-gray-400">6. Soko la P2P</button>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto p-4 space-y-6">
+
+        <!-- 1. DASHIBODI YA TAJIRI (DASHBOARD) -->
+        <section id="sec-dashboard" class="space-y-6">
+            <!-- Emergency Alert Button -->
+            <button onclick="triggerEmergency()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg border border-red-400 flex items-center justify-center space-x-2 animate-bounce">
+                <span>🚨 TAHADHARI YA DHARURA (EMERGENCY ALERT)</span>
+            </button>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                    <p class="text-xs text-gray-400">Gharama za Wiki</p>
+                    <p id="dash-total-expenses" class="text-xl font-bold text-red-400">TZS 0</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                    <p class="text-xs text-gray-400">Mifuko ya Udongo</p>
+                    <p id="dash-total-bags" class="text-xl font-bold text-amber-400">0 Mifuko</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                    <p class="text-xs text-gray-400">Vibarua Shimonji</p>
+                    <p id="dash-active-labor" class="text-xl font-bold text-green-400">0 Wupo</p>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                    <p class="text-xs text-gray-400">Bima (0.50%)</p>
+                    <p id="dash-total-insurance" class="text-xl font-bold text-blue-400">TZS 0</p>
                 </div>
             </div>
-            <div class="table-container">
-                <table id="bima-table">
-                    <thead>
-                        <tr>
-                            <th>Aina ya madini</th>
-                            <th>Bei kwa gram (TZS)</th>
-                            <th>Status ya bima</th>
-                            <th>Makato ya bima (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-bima">
-                        <tr><td>Dhahabu</td><td>180,000</td><td><span class="status-badge">Active</span></td><td>0.5%</td></tr>
-                        <tr><td>Tanzanite</td><td>250,000</td><td><span class="status-badge">Active</span></td><td>0.5%</td></tr>
-                        <tr><td>Diamond</td><td>500,000</td><td><span class="status-badge">Active</span></td><td>0.5%</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
-        <!-- 4. ANALYTICS PAGE -->
-        <div id="page-analytics" class="page">
-            <div class="stats-grid">
-                <div class="stat-card"><label>Jumla ya pasi</label><div class="value" id="analytics-total-pasi">0</div></div>
-                <div class="stat-card"><label>Jumla ya mchanganuo</label><div class="value" id="analytics-total-mauzo">0 TZS</div></div>
-                <div class="stat-card"><label>Aina za madini</label><div class="value">3</div></div>
+            <!-- Dashboard Details -->
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 space-y-2">
+                <h3 class="text-md font-bold text-amber-500">📍 Taarifa za Mgodi & GPS</h3>
+                <p class="text-xs text-gray-300">Eneo Halisi: <span class="text-amber-400 font-mono">-8.5342, 33.4211 (Iringa / Chunya)</span></p>
+                <p class="text-xs text-gray-300">Hali ya Bima: <span class="text-green-400 font-bold">Active (0.50% Deducted automatically)</span></p>
             </div>
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h4>Pasi kwa aina ya madini</h4>
-                    <canvas id="mineralChart"></canvas>
-                </div>
-                <div class="chart-card">
-                    <h4>Mchanganuo kwa hali ya pasi</h4>
-                    <canvas id="statusChart"></canvas>
+        </section>
+
+        <!-- 2. MAHUDHURIO NA SHIFT ZA VIBARUA (LABOR MANAGEMENT) -->
+        <section id="sec-labor" class="hidden space-y-6">
+            <!-- Register New Worker -->
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                <h3 class="text-md font-bold text-amber-500 mb-3">Sajili Mchimbaji / Vibarua Mpya</h3>
+                <form id="labor-form" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <input type="text" id="worker-name" placeholder="Jina Kamili" class="bg-gray-900 border border-gray-700 rounded p-2 text-xs" required>
+                    <select id="worker-role" class="bg-gray-900 border border-gray-700 rounded p-2 text-xs">
+                        <option value="Mponda Udongo">Mponda Udongo</option>
+                        <option value="Mtoza">Mtoza Udongo</option>
+                        <option value="Msimamizi">Msimamizi</option>
+                        <option value="Fundi Mitambo">Fundi Mitambo</option>
+                    </select>
+                    <input type="text" id="worker-nida" placeholder="Namba ya NIDA / Simu" class="bg-gray-900 border border-gray-700 rounded p-2 text-xs" required>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-700 font-bold p-2 rounded text-xs">Sajili Vibarua</button>
+                </form>
+            </div>
+
+            <!-- Workers List -->
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 space-y-3">
+                <h3 class="text-md font-bold text-amber-500">Orodha ya Vibarua & Shift</h3>
+                <div id="workers-list" class="space-y-2">
+                    <!-- Workers dynamically populated here -->
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- 5. MCHANGANUO WA MALIPO PAGE -->
-        <div id="page-mchanganuo" class="page">
-            <div class="stats-grid">
-                <div class="stat-card"><label>Jumla ya mchanganuo</label><div class="value" id="malipo-total-val">0 TZS</div></div>
-                <div class="stat-card"><label>Mchanganuo wenye salio</label><div class="value" id="malipo-salio-val">0 TZS</div></div>
+        <!-- 3. DAFTARI LA MAPATO NA MATUMIZI (EXPENSE & PRODUCTION LEDGER) -->
+        <section id="sec-ledger" class="hidden space-y-6">
+            <!-- Form 1: Expense Entry -->
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 space-y-3">
+                <h3 class="text-md font-bold text-red-400">Tab 1: Rekodi Matumizi (Gharama)</h3>
+                <form id="expense-form" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <select id="exp-category" class="bg-gray-900 border border-gray-700 rounded p-2 text-xs">
+                        <option value="Dizeli">Dizeli</option>
+                        <option value="Chakula">Chakula cha Vibarua</option>
+                        <option value="Vilipuzi">Vilipuzi / Baruti</option>
+                        <option value="Matengenezo">Matengenezo</option>
+                    </select>
+                    <input type="number" id="exp-amount" placeholder="Kiasi (TZS)" class="bg-gray-900 border border-gray-700 rounded p-2 text-xs" required>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 font-bold p-2 rounded text-xs">Hifadhi Matumizi</button>
+                </form>
             </div>
-            <div class="section-header">
-                <h3>Mchanganuo wa malipo</h3>
-                <div>
-                    <input type="text" class="search-input" placeholder="Tafuta..." onkeyup="filterTable('mchanganuo-table', this.value)">
-                    <button class="btn" onclick="openModal('pasiModal')">+ Add mchanganuo</button>
+
+            <!-- Form 2: Production Bags Entry -->
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 space-y-3">
+                <h3 class="text-md font-bold text-amber-500">Tab 2: Uzalishaji wa Mifuko ya Udongo</h3>
+                <form id="bags-form" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input type="text" id="bags-duara" placeholder="Jina la Duara / Shift" class="bg-gray-900 border border-gray-700 rounded p-2 text-xs" required>
+                    <input type="number" id="bags-count" placeholder="Idadi ya Mifuko" class="bg-gray-900 border border-gray-700 rounded p-2 text-xs" required>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-700 font-bold p-2 rounded text-xs">Rekodi Mifuko</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 4. KIKOKOTOO CHA MGAWANYO WA FAIDA -->
+        <section id="sec-calculator" class="hidden space-y-6">
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 space-y-4">
+                <h3 class="text-md font-bold text-amber-500">Kikokotoo cha Mgawanyo wa Faida</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="text-xs text-gray-400">Aina ya Madini:</label>
+                        <select id="calc-mineral" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-xs">
+                            <option value="Gold">Dhahabu (Gold)</option>
+                            <option value="Diamond">Almasi (Diamond)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Gramu Zilizopatikana:</label>
+                        <input type="number" step="0.01" id="calc-grams" oninput="calculateProfit()" placeholder="0.00 Grams" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400">Bei ya Gramu (TZS):</label>
+                        <input type="number" id="calc-price" oninput="calculateProfit()" value="180000" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-xs">
+                    </div>
                 </div>
-            </div>
-            <div class="table-container">
-                <table id="mchanganuo-table">
-                    <thead>
-                        <tr>
-                            <th>Hali ya pasi</th>
-                            <th>Jumla ya mauzo</th>
-                            <th>Ushuru wa TRA (7%)</th>
-                            <th>Makato ya bima (0.5%)</th>
-                            <th>Salio la mchimbaji</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-mchanganuo"></tbody>
-                </table>
-            </div>
-        </div>
 
-    </div>
-
-    <!-- MODAL FORM: ADD PASI -->
-    <div id="pasiModal" class="modal">
-        <div class="modal-body">
-            <h3>Ongeza Pasi ya Usafiri</h3>
-            <form onsubmit="savePasi(event)">
-                <div class="form-group"><label>Namba ya pasi</label><input type="text" id="m_passNo" required placeholder="PASS-001"></div>
-                <div class="form-group"><label>Eneo la mgodi</label><input type="text" id="m_mgodi" required placeholder="Chunya"></div>
-                <div class="form-group">
-                    <label>Aina ya madini</label>
-                    <select id="m_madini">
-                        <option value="Dhahabu">Dhahabu</option>
-                        <option value="Tanzanite">Tanzanite</option>
-                        <option value="Diamond">Diamond</option>
+                <div class="space-y-2">
+                    <label class="text-xs text-gray-300">Mfumo wa Mgawanyo (Baada ya Kurudisha Gharama):</label>
+                    <select id="calc-ratio" onchange="calculateProfit()" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-xs">
+                        <option value="50/50">50% Tajiri / 50% Vibarua</option>
+                        <option value="60/40">60% Tajiri / 40% Vibarua</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Uzito (gram)</label><input type="number" step="0.01" id="m_uzito" required placeholder="15"></div>
-                <div class="form-group"><label>Bei kwa gram (TZS)</label><input type="number" id="m_bei" required placeholder="180000"></div>
-                <div class="form-group">
-                    <label>Hali ya pasi</label>
-                    <select id="m_hali"><option value="Active">Active</option><option value="Completed">Completed</option></select>
-                </div>
-                <div style="display: flex; gap: 8px; margin-top: 16px;">
-                    <button type="submit" class="btn" style="flex:1;">Hifadhi</button>
-                    <button type="button" class="btn" onclick="closeModal('pasiModal')" style="background:#cbd5e1; color:#334155;">Ghairi</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
+                <!-- Outputs -->
+                <div class="border-t border-gray-700 pt-3 space-y-2 text-xs">
+                    <div class="flex justify-between"><span>Thamani yote ya Madini:</span><span id="out-gross" class="font-bold text-green-400">TZS 0</span></div>
+                    <div class="flex justify-between"><span>Makato ya Bima (0.50%):</span><span id="out-insurance" class="font-bold text-blue-400">TZS 0</span></div>
+                    <div class="flex justify-between"><span>Gharama Zilizorudishwa:</span><span id="out-expenses" class="font-bold text-red-400">TZS 0</span></div>
+                    <div class="flex justify-between text-sm font-bold border-t border-gray-700 pt-2"><span>Faida Halisi (Net Profit):</span><span id="out-net" class="text-amber-400">TZS 0</span></div>
+                    <div class="flex justify-between text-sm"><span>Fungu la Tajiri / Mwenye Mgodi:</span><span id="out-owner" class="text-blue-400 font-bold">TZS 0</span></div>
+                    <div class="flex justify-between text-sm"><span>Fungu la Vibarua:</span><span id="out-labor" class="text-purple-400 font-bold">TZS 0</span></div>
+                </div>
+
+                <button onclick="saveGoldBatch()" class="w-full bg-green-600 hover:bg-green-700 font-bold py-2 rounded text-xs">Hifadhi & Zalisha Passport ya Kimataifa</button>
+            </div>
+        </section>
+
+        <!-- 5. ESG & FAIRMINED LOG (TRACEABILITY) -->
+        <section id="sec-esg" class="hidden space-y-6">
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 space-y-3">
+                <h3 class="text-md font-bold text-amber-500">Uhakiki wa Kimataifa (ESG & Fairmined Checklist)</h3>
+                <div class="space-y-2 text-xs">
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="esg-child" class="w-4 h-4" checked>
+                        <span>Hakuna mtoto aliyeingia mgodini leo (Child Labor Free)</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" id="esg-safety" class="w-4 h-4" checked>
+                        <span>Vifaa vyote vya Usalama na Oksijeni vimekaguliwa kabla ya Shift</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Passports List -->
+            <div class="space-y-3">
+                <h3 class="text-md font-bold text-amber-500">Digital Gold Passports</h3>
+                <div id="passports-list" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- 6. SOKO LA P2P (TRADING MARKET) -->
+        <section id="sec-p2p" class="hidden space-y-6">
+            <h3 class="text-md font-bold text-amber-500">Soko la P2P & Escrow Trading</h3>
+            <div id="p2p-market-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript Engine -->
     <script>
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlBGH7Uu8VjO5UPT3pEtIZGvAMiIILqIXxlSWFyH46pDQCvnjR_sns5jFYJJJmkQ/pub?gid=1904855412&single=true&output=csv";
+        // LocalStorage Initial State
+        let appData = JSON.parse(localStorage.getItem('miningOS_v2')) || {
+            workers: [
+                { name: 'Juma Khamis', role: 'Mponda Udongo', nida: '19900101-001', active: true },
+                { name: 'Amani Sanga', role: 'Mtoza', nida: '19950202-002', active: false }
+            ],
+            expenses: [],
+            bags: [],
+            batches: []
+        };
 
-        let allPasses = JSON.parse(localStorage.getItem('my_passes') || '[]');
-        let mineralChart, statusChart;
-
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('sw-TZ', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-        function switchPage(pageId, element) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            element.classList.add('active');
-            if(pageId === 'analytics') renderCharts();
+        function saveData() {
+            localStorage.setItem('miningOS_v2', JSON.stringify(appData));
+            updateUI();
         }
 
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        async function loadSheetData() {
-            try {
-                const res = await fetch(SHEET_CSV_URL);
-                const text = await res.text();
-                const rows = text.split('\n').map(r => r.split(','));
-                const headers = rows[0].map(h => h.trim());
-                
-                const sheetPasses = rows.slice(1).filter(r => r.length > 1 && r[0] !== '').map(row => {
-                    let obj = {};
-                    headers.forEach((h, i) => { obj[h] = row[i] ? row[i].trim() : ''; });
-                    return {
-                        passNo: obj['Namba ya pasi'] || 'N/A',
-                        mgodi: obj['Eneo la mgodi'] || '-',
-                        madini: obj['Aina ya madini'] || '-',
-                        uzito: parseFloat(obj['Uzito (gram)']) || 0,
-                        bei: 180000,
-                        hali: obj['Hali ya pasi'] || 'Active'
-                    };
-                });
-                
-                allPasses = [...allPasses, ...sheetPasses];
-                renderAll();
-            } catch(e) {
-                renderAll();
-            }
+        function triggerEmergency() {
+            alert("🚨 ALARM YA DHARURA IMETUMWA! Taarifa ya Usalama imetumwa kwa Wasimamizi na Timu ya Uokoaji.");
         }
 
-        function savePasi(e) {
+        // Tab Switcher
+        function switchTab(tabName) {
+            const tabs = ['dashboard', 'labor', 'ledger', 'calculator', 'esg', 'p2p'];
+            tabs.forEach(t => {
+                document.getElementById(`sec-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('active-tab');
+                document.getElementById(`tab-${t}`).classList.add('text-gray-400');
+            });
+            document.getElementById(`sec-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('active-tab');
+            document.getElementById(`tab-${tabName}`).classList.remove('text-gray-400');
+        }
+
+        // Labor Management
+        document.getElementById('labor-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const newP = {
-                passNo: document.getElementById('m_passNo').value,
-                mgodi: document.getElementById('m_mgodi').value,
-                madini: document.getElementById('m_madini').value,
-                uzito: parseFloat(document.getElementById('m_uzito').value) || 0,
-                bei: parseFloat(document.getElementById('m_bei').value) || 180000,
-                hali: document.getElementById('m_hali').value
-            };
-            allPasses.unshift(newP);
-            localStorage.setItem('my_passes', JSON.stringify(allPasses));
-            closeModal('pasiModal');
-            renderAll();
+            appData.workers.push({
+                name: document.getElementById('worker-name').value,
+                role: document.getElementById('worker-role').value,
+                nida: document.getElementById('worker-nida').value,
+                active: false
+            });
+            document.getElementById('worker-name').value = '';
+            document.getElementById('worker-nida').value = '';
+            saveData();
+        });
+
+        function toggleShift(index) {
+            appData.workers[index].active = !appData.workers[index].active;
+            saveData();
         }
 
-        function renderAll() {
-            let totalMauzo = 0;
-            let totalSalio = 0;
+        // Ledger Forms
+        document.getElementById('expense-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            appData.expenses.push({
+                category: document.getElementById('exp-category').value,
+                amount: parseFloat(document.getElementById('exp-amount').value)
+            });
+            document.getElementById('exp-amount').value = '';
+            saveData();
+            alert('Matumizi yamerekodiwa!');
+        });
 
-            const tbodyHome = document.getElementById('tbody-home-pasi');
-            const tbodyFull = document.getElementById('tbody-full-pasi');
-            const tbodyMalipo = document.getElementById('tbody-mchanganuo');
+        document.getElementById('bags-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            appData.bags.push({
+                duara: document.getElementById('bags-duara').value,
+                count: parseInt(document.getElementById('bags-count').value)
+            });
+            document.getElementById('bags-count').value = '';
+            saveData();
+            alert('Mifuko ya udongo imerekodiwa!');
+        });
 
-            tbodyHome.innerHTML = '';
-            tbodyFull.innerHTML = '';
-            tbodyMalipo.innerHTML = '';
+        // Calculator Logic
+        function calculateProfit() {
+            const grams = parseFloat(document.getElementById('calc-grams').value) || 0;
+            const price = parseFloat(document.getElementById('calc-price').value) || 0;
+            const ratio = document.getElementById('calc-ratio').value;
 
-            allPasses.forEach(p => {
-                const mauzo = p.uzito * p.bei;
-                const tra = mauzo * 0.07;
-                const bima = mauzo * 0.005;
-                const salio = mauzo - (tra + bima);
+            const gross = grams * price;
+            const insurance = gross * 0.005; // 0.50% Insurance
+            const totalExpenses = appData.expenses.reduce((acc, e) => acc + e.amount, 0);
+            const net = gross - totalExpenses;
 
-                totalMauzo += mauzo;
-                totalSalio += salio;
+            let ownerRatio = ratio === '60/40' ? 0.6 : 0.5;
+            const ownerShare = net > 0 ? net * ownerRatio : 0;
+            const laborShare = net > 0 ? net * (1 - ownerRatio) : 0;
 
-                const rowHtml = `
-                    <tr>
-                        <td><b>${p.passNo}</b></td>
-                        <td>${p.mgodi}</td>
-                        <td>${p.madini}</td>
-                        <td>${p.uzito}g</td>
-                        <td><span class="status-badge">${p.hali}</span></td>
-                    </tr>
+            document.getElementById('out-gross').innerText = `TZS ${gross.toLocaleString()}`;
+            document.getElementById('out-insurance').innerText = `TZS ${insurance.toLocaleString()}`;
+            document.getElementById('out-expenses').innerText = `TZS ${totalExpenses.toLocaleString()}`;
+            document.getElementById('out-net').innerText = `TZS ${net.toLocaleString()}`;
+            document.getElementById('out-owner').innerText = `TZS ${ownerShare.toLocaleString()}`;
+            document.getElementById('out-labor').innerText = `TZS ${laborShare.toLocaleString()}`;
+        }
+
+        function saveGoldBatch() {
+            const grams = parseFloat(document.getElementById('calc-grams').value) || 0;
+            const price = parseFloat(document.getElementById('calc-price').value) || 0;
+            if(grams <= 0) return alert('Tafadhali ingiza idadi ya gramu!');
+
+            const gross = grams * price;
+            const insurance = gross * 0.005;
+
+            appData.batches.push({
+                id: 'BATCH-' + Math.floor(100000 + Math.random() * 900000),
+                grams,
+                gross,
+                insurance,
+                status: 'IN_VAULT',
+                owner: 'Tajiri wa Mgodi',
+                esgChild: document.getElementById('esg-child').checked,
+                esgSafety: document.getElementById('esg-safety').checked,
+                gps: '-8.5342, 33.4211'
+            });
+
+            document.getElementById('calc-grams').value = '';
+            saveData();
+            alert('Digital Gold Passport Imezalishwa Kikamilifu!');
+        }
+
+        function listP2P(id) {
+            const b = appData.batches.find(item => item.id === id);
+            if(b) { b.status = 'FOR_SALE'; saveData(); }
+        }
+
+        function buyP2P(id) {
+            const b = appData.batches.find(item => item.id === id);
+            if(b) { b.status = 'SOLD'; b.owner = 'Mnunuzi wa Mwisho (Dubai Refinery)'; saveData(); }
+        }
+
+        // Update UI Dashboard & Components
+        function updateUI() {
+            const totalExp = appData.expenses.reduce((acc, e) => acc + e.amount, 0);
+            const totalBags = appData.bags.reduce((acc, b) => acc + b.count, 0);
+            const activeLabor = appData.workers.filter(w => w.active).length;
+            const totalIns = appData.batches.reduce((acc, b) => acc + b.insurance, 0);
+
+            document.getElementById('dash-total-expenses').innerText = `TZS ${totalExp.toLocaleString()}`;
+            document.getElementById('dash-total-bags').innerText = `${totalBags} Mifuko`;
+            document.getElementById('dash-active-labor').innerText = `${activeLabor} Yupo`;
+            document.getElementById('dash-total-insurance').innerText = `TZS ${totalIns.toLocaleString()}`;
+
+            // Labor UI
+            const laborList = document.getElementById('workers-list');
+            laborList.innerHTML = '';
+            appData.workers.forEach((w, i) => {
+                laborList.innerHTML += `
+                    <div class="flex justify-between items-center bg-gray-900 p-2 rounded border border-gray-700">
+                        <div>
+                            <p class="font-bold text-xs ${w.active ? 'text-green-400' : 'text-gray-400'}">${w.name} (${w.role})</p>
+                            <p class="text-[10px] text-gray-500">NIDA: ${w.nida}</p>
+                        </div>
+                        <button onclick="toggleShift(${i})" class="text-xs px-3 py-1 rounded font-bold ${w.active ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300'}">
+                            ${w.active ? 'Yupo Shimonji' : 'Ameingia Shift'}
+                        </button>
+                    </div>
                 `;
-                tbodyHome.innerHTML += rowHtml;
-                tbodyFull.innerHTML += rowHtml;
+            });
 
-                tbodyMalipo.innerHTML += `
-                    <tr>
-                        <td><span class="status-badge">${p.hali}</span></td>
-                        <td><b>${mauzo.toLocaleString()} TZS</b></td>
-                        <td>${tra.toLocaleString()} TZS</td>
-                        <td>${bima.toLocaleString()} TZS</td>
-                        <td style="color:#15803d; font-weight:bold;">${salio.toLocaleString()} TZS</td>
-                    </tr>
+            // Passports UI
+            const passList = document.getElementById('passports-list');
+            passList.innerHTML = '';
+            appData.batches.forEach(b => {
+                passList.innerHTML += `
+                    <div class="bg-gray-800 p-3 rounded-xl border border-amber-500/30 text-xs space-y-2">
+                        <div class="flex justify-between font-mono font-bold text-amber-400">
+                            <span>${b.id}</span><span>${b.status}</span>
+                        </div>
+                        <p>Uzito: ${b.grams} Grams | Bima: TZS ${b.insurance.toLocaleString()}</p>
+                        <p class="text-gray-400">ESG: ${b.esgChild ? '✅ No Child Labor' : '❌ Warning'} | GPS: ${b.gps}</p>
+                        ${b.status === 'IN_VAULT' ? `<button onclick="listP2P('${b.id}')" class="w-full bg-blue-600 font-bold py-1 rounded text-[11px]">Weka Sokoni P2P</button>` : ''}
+                    </div>
                 `;
             });
 
-            // Update stats labels
-            document.getElementById('stat-total-pasi').innerText = allPasses.length;
-            document.getElementById('pasi-page-total').innerText = allPasses.length;
-            document.getElementById('pasi-page-active').innerText = allPasses.filter(x => x.hali === 'Active').length;
-            document.getElementById('analytics-total-pasi').innerText = allPasses.length;
-
-            document.getElementById('stat-total-malipo').innerText = totalMauzo.toLocaleString() + " TZS";
-            document.getElementById('analytics-total-mauzo').innerText = totalMauzo.toLocaleString() + " TZS";
-            document.getElementById('malipo-total-val').innerText = totalMauzo.toLocaleString() + " TZS";
-            document.getElementById('malipo-salio-val').innerText = totalSalio.toLocaleString() + " TZS";
-        }
-
-        function renderCharts() {
-            const mineralCounts = {};
-            const statusCounts = {};
-
-            allPasses.forEach(p => {
-                mineralCounts[p.madini] = (mineralCounts[p.madini] || 0) + 1;
-                statusCounts[p.hali] = (statusCounts[p.hali] || 0) + 1;
-            });
-
-            if(mineralChart) mineralChart.destroy();
-            if(statusChart) statusChart.destroy();
-
-            const ctx1 = document.getElementById('mineralChart').getContext('2d');
-            mineralChart = new Chart(ctx1, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(mineralCounts).length ? Object.keys(mineralCounts) : ['Dhahabu', 'Tanzanite'],
-                    datasets: [{ data: Object.values(mineralCounts).length ? Object.values(mineralCounts) : [1, 0], backgroundColor: ['#d97706', '#0284c7', '#10b981'] }]
-                }
-            });
-
-            const ctx2 = document.getElementById('statusChart').getContext('2d');
-            statusChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(statusCounts).length ? Object.keys(statusCounts) : ['Active', 'Completed'],
-                    datasets: [{ data: Object.values(statusCounts).length ? Object.values(statusCounts) : [1, 0], backgroundColor: ['#10b981', '#64748b'] }]
-                }
+            // P2P UI
+            const p2pList = document.getElementById('p2p-market-list');
+            p2pList.innerHTML = '';
+            appData.batches.filter(b => b.status === 'FOR_SALE' || b.status === 'SOLD').forEach(b => {
+                p2pList.innerHTML += `
+                    <div class="bg-gray-800 p-3 rounded-xl border border-gray-700 text-xs space-y-2">
+                        <div class="flex justify-between font-bold text-amber-400">
+                            <span>${b.id}</span><span class="${b.status === 'SOLD' ? 'text-green-400' : 'text-blue-400'}">${b.status}</span>
+                        </div>
+                        <p>Uzito: ${b.grams} Grams | Thamani: TZS ${b.gross.toLocaleString()}</p>
+                        <p class="text-gray-400">Umiliki: ${b.owner}</p>
+                        ${b.status === 'FOR_SALE' ? `<button onclick="buyP2P('${b.id}')" class="w-full bg-green-600 font-bold py-1 rounded">Nunua Kupitia Escrow</button>` : ''}
+                    </div>
+                `;
             });
         }
 
-        function filterTable(tableId, query) {
-            const q = query.toLowerCase();
-            document.querySelectorAll(`#${tableId} tbody tr`).forEach(tr => {
-                tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
-            });
-        }
-
-        loadSheetData();
+        updateUI();
     </script>
 </body>
 </html>
