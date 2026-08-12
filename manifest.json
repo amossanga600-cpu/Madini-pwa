@@ -1,6 +1,6 @@
 {
   "short_name": "Mining OS",
-  "name": "Mining OS - Offline Management Engine",
+  "name": "Mining OS - National Mineral Engine",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/2991/2991106.png",
@@ -9,9 +9,8 @@
     }
   ],
   "start_url": "./index.html",
-  "background_color": "#111827",
+  "background_color": "#020617",
   "theme_color": "#d97706",
   "display": "standalone",
   "orientation": "portrait"
 }
-
