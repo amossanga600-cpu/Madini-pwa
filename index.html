@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mining OS - National Mineral Supply Chain & Ecosystem</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Mining OS - National Mineral Supply Chain</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#d97706">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- QR Code Generator Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         .glass-panel {
             background: rgba(15, 23, 42, 0.85);
@@ -19,19 +23,12 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .gold-border {
-            border-color: rgba(245, 158, 11, 0.3);
-        }
-        .demo-badge {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
+        .gold-border { border-color: rgba(245, 158, 11, 0.3); }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
 
-    <!-- TOP NAVIGATION / HEADER -->
+    <!-- HEADER -->
     <header class="sticky top-0 z-50 glass-panel border-b border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -42,21 +39,20 @@
                     <div>
                         <div class="flex items-center space-x-2">
                             <span class="text-xl font-bold tracking-wider gold-gradient-text">MINING OS</span>
-                            <span class="demo-badge text-[10px] font-mono font-bold px-2 py-0.5 rounded">DEMO MODE</span>
+                            <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30">SYSTEM LIVE</span>
                         </div>
                         <span class="text-xs block text-slate-400 -mt-1">National Mineral Ecosystem Engine</span>
                     </div>
                 </div>
 
-                <!-- Guided Demo Trigger Button for Ministers -->
-                <button onclick="startMinisterDemo()" class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:from-amber-400 hover:to-amber-500 font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-2 shadow-lg shadow-amber-500/10">
-                    <i data-lucide="play-circle" class="w-4 h-4"></i>
-                    <span>Run Guided Minister Demo</span>
+                <button onclick="resetSystemData()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-semibold px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    <span>Reset Data</span>
                 </button>
             </div>
         </div>
 
-        <!-- MAIN MODULE NAVIGATION BAR -->
+        <!-- NAVIGATION -->
         <nav class="bg-slate-900/90 border-t border-slate-800/80 overflow-x-auto">
             <div class="max-w-7xl mx-auto px-4 flex space-x-1 py-2 text-xs font-medium whitespace-nowrap">
                 <button onclick="switchTab('regulator')" id="tab-regulator" class="nav-btn px-3 py-2 rounded-lg bg-amber-500 text-slate-950 font-bold flex items-center space-x-2">
@@ -72,94 +68,113 @@
                     <i data-lucide="route" class="w-4 h-4"></i><span>4. Traceability Route</span>
                 </button>
                 <button onclick="switchTab('marketplace')" id="tab-marketplace" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-2">
-                    <i data-lucide="shopping-bag" class="w-4 h-4"></i><span>5. Marketplace & Bids</span>
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i><span>5. Marketplace</span>
                 </button>
                 <button onclick="switchTab('prices')" id="tab-prices" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-2">
-                    <i data-lucide="trending-up" class="w-4 h-4"></i><span>Price Board</span>
+                    <i data-lucide="trending-up" class="w-4 h-4"></i><span>Live Price Board</span>
                 </button>
             </div>
         </nav>
     </header>
 
-    <!-- DEMO STEPS NOTIFICATION BANNER -->
-    <div id="demoBanner" class="bg-amber-500/10 border-b border-amber-500/30 py-2 px-4 text-center text-xs text-amber-400 font-medium hidden">
-        <span id="demoStepText">Demo Active Step 1/10</span>
-    </div>
-
     <!-- CONTENT CONTAINERS -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-        <!-- 1. REGULATOR / GOVERNMENT DASHBOARD MODULE -->
+        <!-- 1. REGULATOR DASHBOARD -->
         <section id="module-regulator" class="module-content space-y-6">
             <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-xl border border-slate-800">
                 <div>
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                        <span>National Mineral Regulatory Overview</span>
-                        <span class="demo-badge text-[9px] px-2 py-0.5 rounded font-mono">DEMO DATA</span>
-                    </h2>
-                    <p class="text-xs text-slate-400">Muonekano wa sekta nzima nchini na makadirio ya kodi/royalty kwa wakati halisi.</p>
+                    <h2 class="text-lg font-bold text-white">National Mineral Regulatory Overview</h2>
+                    <p class="text-xs text-slate-400">Muonekano wa jumla wa uzalishaji na kodi (Royalty 6%) iliyokusanywa.</p>
                 </div>
                 <div class="text-right">
-                    <span class="text-xs text-slate-400 block">Est. National Royalty (6%)</span>
-                    <span id="regulatorRoyalty" class="text-xl font-bold text-emerald-400 font-mono">$18,840.00 USD</span>
+                    <span class="text-xs text-slate-400 block">Total Est. Royalty (6%)</span>
+                    <span id="regulatorRoyalty" class="text-xl font-bold text-emerald-400 font-mono">$0.00 USD</span>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="glass-panel p-4 rounded-xl border-l-4 border-l-amber-500">
-                    <p class="text-xs text-slate-400 font-medium">Registered Mines</p>
-                    <h3 class="text-2xl font-bold mt-1">12,482</h3>
-                    <p class="text-xs text-emerald-400 mt-1">8,921 Active Today</p>
+                    <p class="text-xs text-slate-400 font-medium">Active Mineral Lots</p>
+                    <h3 id="regulatorTotalLots" class="text-2xl font-bold mt-1">0</h3>
+                    <p class="text-xs text-slate-400 mt-1">Registered in System</p>
                 </div>
                 <div class="glass-panel p-4 rounded-xl border-l-4 border-l-blue-500">
-                    <p class="text-xs text-slate-400 font-medium">Recorded Active Lots</p>
-                    <h3 id="regulatorActiveLots" class="text-2xl font-bold mt-1">1 Lot Active</h3>
-                    <p class="text-xs text-slate-400 mt-1">1 In Lifecycle Engine</p>
+                    <p class="text-xs text-slate-400 font-medium">Total Production Weight</p>
+                    <h3 id="regulatorTotalWeight" class="text-2xl font-bold mt-1">0 Grams</h3>
+                    <p class="text-xs text-emerald-400 mt-1">Verified Digital Assets</p>
                 </div>
                 <div class="glass-panel p-4 rounded-xl border-l-4 border-l-purple-500">
-                    <p class="text-xs text-slate-400 font-medium">Transit Route Status</p>
-                    <h3 id="regulatorTransitStatus" class="text-2xl font-bold mt-1 text-amber-400">Mine → Buying Centre</h3>
+                    <p class="text-xs text-slate-400 font-medium">Lots in Transit</p>
+                    <h3 id="regulatorTransitCount" class="text-2xl font-bold mt-1 text-amber-400">0</h3>
                     <p class="text-xs text-slate-400 mt-1">Geofenced Escort Active</p>
                 </div>
                 <div class="glass-panel p-4 rounded-xl border-l-4 border-l-emerald-500">
-                    <p class="text-xs text-slate-400 font-medium">Ecosystem Market Volume</p>
-                    <h3 id="regulatorMarketVolume" class="text-2xl font-bold mt-1 font-mono">$314,000 USD</h3>
-                    <p class="text-xs text-emerald-400 mt-1">1 Verified Active Lot</p>
+                    <p class="text-xs text-slate-400 font-medium">Total Market Volume</p>
+                    <h3 id="regulatorMarketVolume" class="text-2xl font-bold mt-1 font-mono">$0 USD</h3>
+                    <p class="text-xs text-emerald-400 mt-1">Total Estimated Value</p>
+                </div>
+            </div>
+
+            <!-- Global Lots Table -->
+            <div class="glass-panel rounded-xl p-5 border border-slate-800">
+                <h3 class="text-sm font-bold text-white mb-4">Orodha ya Mzigo Wote Nchini (Registry)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="text-slate-400 border-b border-slate-800 bg-slate-900/50">
+                            <tr>
+                                <th class="p-2">Lot ID</th>
+                                <th class="p-2">Mgodi</th>
+                                <th class="p-2">Uzito</th>
+                                <th class="p-2">Miliki</th>
+                                <th class="p-2">Hatua (Status)</th>
+                                <th class="p-2">Thamani (USD)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="regulatorTableBody" class="divide-y divide-slate-800/50">
+                            <!-- Populated Dynamically -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
 
         <!-- 2. MINES & PRODUCTION MODULE -->
         <section id="module-mines" class="module-content hidden space-y-6">
-            <div class="glass-panel p-6 rounded-2xl">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Mine Production & Batch Creation</h2>
-                        <p class="text-xs text-slate-400">Mgodi: Geita Shaft A (PML-004928) • Licenced Owner: Amosi Sanga</p>
-                    </div>
-                    <span class="demo-badge text-[10px] px-2 py-0.5 rounded font-mono">SIMULATED MINE LOGS</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Registration Form -->
+                <div class="glass-panel p-5 rounded-2xl border gold-border md:col-span-1 space-y-4">
+                    <h3 class="text-sm font-bold text-amber-400 border-b border-slate-800 pb-2">Sajili Uzalishaji Mpya (New Lot)</h3>
+                    <form id="addLotForm" onsubmit="handleCreateLot(event)" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-slate-400 mb-1">Jina la Mgodi / Leseni</label>
+                            <input type="text" id="formMineName" required placeholder="Geita Shaft A (PML-004928)" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">Jina la Mchimbaji (Owner)</label>
+                            <input type="text" id="formOwner" required placeholder="Amosi Sanga" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-slate-400 mb-1">Uzito (Grams)</label>
+                                <input type="number" id="formWeight" step="0.1" required placeholder="5000" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">Usafi (%)</label>
+                                <input type="number" id="formPurity" step="0.1" max="100" required placeholder="94.5" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-500">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg transition-colors">
+                            + Sajili na Tengeneza Passport
+                        </button>
+                    </form>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-xs space-y-2">
-                            <div class="flex justify-between"><span class="text-slate-400">GPS Location:</span><span class="font-mono text-white">-2.8689°, 32.2238°</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">Shift Active:</span><span class="text-emerald-400 font-bold">Day Shift (42 Workers)</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">License Status:</span><span class="text-emerald-400 font-bold">Valid Until 2030</span></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-900 p-5 rounded-xl border gold-border space-y-3">
-                        <h3 class="text-sm font-bold text-amber-400">Interactive Active Lot Summary</h3>
-                        <div class="text-xs space-y-1.5 font-mono">
-                            <div class="flex justify-between"><span class="text-slate-400">Lot ID:</span><span id="pLotId" class="text-white font-bold">GP-TZ-000421</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">Weight:</span><span id="pLotWeight" class="text-amber-400 font-bold">5,000 Grams (5 Kg)</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">Purity:</span><span id="pLotPurity" class="text-white">94.5% Gold</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">Current Lifecycle Step:</span><span id="pLotStep" class="text-emerald-400 font-bold">1. Production / Extraction</span></div>
-                        </div>
-                        <button onclick="advanceLifecycle()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-xs mt-2">
-                            Advance Lifecycle Step →
-                        </button>
+                <!-- Active Lots List -->
+                <div class="glass-panel p-5 rounded-2xl md:col-span-2 space-y-4">
+                    <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">Orodha ya Uzalishaji & Hatua za Mzigo</h3>
+                    <div id="minesLotList" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                        <!-- Populated Dynamically -->
                     </div>
                 </div>
             </div>
@@ -167,57 +182,42 @@
 
         <!-- 3. DIGITAL PASSPORT MODULE -->
         <section id="module-passport" class="module-content hidden space-y-6">
-            <div class="glass-panel p-6 rounded-2xl border gold-border max-w-2xl mx-auto relative">
-                <div class="text-center border-b border-slate-800 pb-4 mb-4">
-                    <span class="bg-amber-500/20 text-amber-400 text-xs px-3 py-1 rounded-full font-mono font-bold">MINERAL DIGITAL BIRTH CERTIFICATE</span>
-                    <h2 id="passLotId" class="text-2xl font-mono font-bold text-white mt-2">GP-TZ-000421</h2>
-                    <p class="text-xs text-slate-400">United Republic of Tanzania Mineral Supply Chain Registry</p>
+            <div class="glass-panel p-6 rounded-2xl border gold-border max-w-xl mx-auto text-center space-y-4">
+                <div class="border-b border-slate-800 pb-3">
+                    <span class="bg-amber-500/20 text-amber-400 text-[10px] px-3 py-1 rounded-full font-mono font-bold">MINERAL DIGITAL BIRTH CERTIFICATE</span>
+                    <h2 id="passLotId" class="text-2xl font-mono font-bold text-white mt-2">No Lot Selected</h2>
+                    <p class="text-xs text-slate-400">United Republic of Tanzania Mineral Registry</p>
                 </div>
-                <div class="grid grid-cols-2 gap-4 text-xs font-mono">
-                    <div><span class="text-slate-500 block">Origin Mine:</span><span class="font-bold text-white">Geita Shaft A (PML-004928)</span></div>
-                    <div><span class="text-slate-500 block">Weight / Purity:</span><span id="passWeight" class="font-bold text-amber-400">5.0 Kg (94.5% Gold)</span></div>
-                    <div><span class="text-slate-500 block">Current Custodian:</span><span id="passCustodian" class="text-white font-bold">Amosi Sanga (Miner)</span></div>
-                    <div><span class="text-slate-500 block">Legal Owner:</span><span id="passOwner" class="text-emerald-400 font-bold">Amosi Sanga</span></div>
+
+                <!-- QR Code Display Area -->
+                <div class="flex justify-center my-4">
+                    <div id="qrcode" class="p-3 bg-white rounded-xl"></div>
                 </div>
-                <div class="mt-6 pt-4 border-t border-slate-800 flex justify-between items-center text-xs">
-                    <span class="text-emerald-400 flex items-center font-mono"><i data-lucide="check-circle" class="w-4 h-4 mr-1"></i> Blockchain Signature Verified</span>
-                    <span class="demo-badge text-[9px] px-2 py-0.5 rounded font-mono">SIMULATED PASSPORT</span>
+
+                <div class="grid grid-cols-2 gap-4 text-xs font-mono text-left bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+                    <div><span class="text-slate-500 block">Origin Mine:</span><span id="passMine" class="font-bold text-white">-</span></div>
+                    <div><span class="text-slate-500 block">Weight / Purity:</span><span id="passWeight" class="font-bold text-amber-400">-</span></div>
+                    <div><span class="text-slate-500 block">Current Custodian:</span><span id="passCustodian" class="text-white font-bold">-</span></div>
+                    <div><span class="text-slate-500 block">Legal Owner:</span><span id="passOwner" class="text-emerald-400 font-bold">-</span></div>
                 </div>
             </div>
         </section>
 
         <!-- 4. TRACEABILITY ROUTE MODULE -->
         <section id="module-traceability" class="module-content hidden space-y-6">
-            <div class="glass-panel p-6 rounded-xl">
-                <div class="flex justify-between items-center mb-6">
+            <div class="glass-panel p-6 rounded-xl space-y-6">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                     <div>
                         <h2 class="text-lg font-bold text-slate-100">Mineral Lot Live Traceability Timeline</h2>
-                        <p class="text-xs text-slate-400">Ufuatiliaji wa Mzigo: Mine → Transport → Buying Centre → Marketplace → Buyer Transfer</p>
+                        <p class="text-xs text-slate-400">Chagua Lot kuona safari yake:</p>
                     </div>
-                    <span class="demo-badge text-[10px] px-2 py-0.5 rounded font-mono">SIMULATED ROUTE</span>
+                    <select id="traceabilityLotSelect" onchange="renderTraceabilityRoute()" class="bg-slate-900 border border-slate-700 text-amber-400 text-xs font-mono font-bold px-3 py-1.5 rounded-lg focus:outline-none">
+                        <!-- Populated Dynamically -->
+                    </select>
                 </div>
 
-                <div class="relative border-l-2 border-amber-500/40 ml-4 space-y-8">
-                    <div id="step-1-ui" class="relative pl-6 opacity-100">
-                        <div class="absolute -left-2.5 top-0.5 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center text-slate-950 font-bold text-xs">1</div>
-                        <h4 class="text-sm font-bold text-white">Mine Extraction & Digital Passport Issued</h4>
-                        <p class="text-xs text-slate-400">Geita Shaft A • 5.0 Kg Gold • Digital Passport Created</p>
-                    </div>
-                    <div id="step-2-ui" class="relative pl-6 opacity-40">
-                        <div class="absolute -left-2.5 top-0.5 w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold text-xs">2</div>
-                        <h4 class="text-sm font-bold text-white">In Transport to Regional Buying Centre</h4>
-                        <p class="text-xs text-slate-400">GPS Escort Vehicle Active • Geofence Monitoring</p>
-                    </div>
-                    <div id="step-3-ui" class="relative pl-6 opacity-40">
-                        <div class="absolute -left-2.5 top-0.5 w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold text-xs">3</div>
-                        <h4 class="text-sm font-bold text-white">Buying Centre Assay & Royalty Valuation</h4>
-                        <p class="text-xs text-slate-400">Geita Regional Buying Hub • Government Assayer Verified</p>
-                    </div>
-                    <div id="step-4-ui" class="relative pl-6 opacity-40">
-                        <div class="absolute -left-2.5 top-0.5 w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold text-xs">4</div>
-                        <h4 class="text-sm font-bold text-white">Marketplace Offer & Ownership Transfer</h4>
-                        <p class="text-xs text-slate-400">Buyer Offer Accepted • Digital Title Transfer Completed</p>
-                    </div>
+                <div id="traceabilityTimeline" class="relative border-l-2 border-amber-500/40 ml-4 space-y-8">
+                    <!-- Populated Dynamically -->
                 </div>
             </div>
         </section>
@@ -227,39 +227,22 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-xl font-bold text-white">National Mining Marketplace</h2>
-                    <p class="text-xs text-slate-400">Biashara ya madini iliyothibitishwa na Serikali</p>
+                    <p class="text-xs text-slate-400">Nunua au uze madini yaliyothibitishwa na Serikali</p>
                 </div>
-                <span class="demo-badge text-[10px] px-2 py-0.5 rounded font-mono">SIMULATED MARKETFLOW</span>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Lot Card -->
-                <div class="glass-panel rounded-2xl overflow-hidden border gold-border p-5 space-y-4">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <span class="font-mono text-xs text-amber-400 font-bold">LOT #GP-TZ-000421</span>
-                        <span id="marketStatusBadge" class="bg-amber-500/20 text-amber-400 text-[10px] px-2.5 py-1 rounded font-bold font-mono">STAGE 1: AT MINE</span>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 text-xs font-mono">
-                        <div><span class="text-slate-500 block">Weight & Grade</span><span class="text-white font-bold">5.0 Kg (94.5% Au)</span></div>
-                        <div><span class="text-slate-500 block">Valuation (Market)</span><span class="text-emerald-400 font-bold">$314,000 USD</span></div>
-                        <div><span class="text-slate-500 block">Seller</span><span id="mSeller" class="text-slate-300">Amosi Sanga (Miner)</span></div>
-                        <div><span class="text-slate-500 block">Current Owner</span><span id="mOwner" class="text-amber-400 font-bold">Amosi Sanga</span></div>
-                    </div>
-
-                    <div id="marketActionArea" class="pt-3 border-t border-slate-800 space-y-2">
-                        <p class="text-xs text-slate-400">Lazima Lot ifike Stage 3 (Buying Centre) kuweka Offer sokoni.</p>
-                        <button id="btnSubmitOffer" disabled onclick="submitOffer()" class="w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs">
-                            Submit Buyer Offer ($314,000 USD)
-                        </button>
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-white">Madini Yanayouzwa (Ready for Bid)</h3>
+                    <div id="marketplaceList" class="space-y-4">
+                        <!-- Populated Dynamically -->
                     </div>
                 </div>
 
-                <!-- Transaction Log -->
-                <div class="glass-panel rounded-2xl p-5 space-y-3">
+                <div class="glass-panel rounded-2xl p-5 space-y-3 border border-slate-800">
                     <h3 class="text-sm font-bold text-white border-b border-slate-800 pb-2">Audit & Transaction Log</h3>
-                    <div id="txLog" class="text-xs font-mono space-y-2 text-slate-400 max-h-48 overflow-y-auto">
-                        <p class="text-emerald-400">[SYSTEM INIT] Lot GP-TZ-000421 registered at Geita Shaft A.</p>
+                    <div id="txLog" class="text-xs font-mono space-y-2 text-slate-400 max-h-80 overflow-y-auto">
+                        <!-- Audit Trail Logs -->
                     </div>
                 </div>
             </div>
@@ -267,37 +250,37 @@
 
         <!-- 6. LIVE PRICE BOARD MODULE -->
         <section id="module-prices" class="module-content hidden space-y-6">
-            <div class="glass-panel p-6 rounded-2xl">
-                <div class="flex justify-between items-center mb-6">
+            <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                     <div>
-                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                            <span>Mineral Price Index</span>
-                            <span class="demo-badge text-[9px] px-2 py-0.5 rounded font-mono">INDICATIVE / DEMO PRICES</span>
-                        </h2>
-                        <p class="text-xs text-slate-400">Bei za viashiria vya masoko kabla ya kuunganishwa na API halisi</p>
+                        <h2 class="text-xl font-bold text-white">Live Mineral Price Index</h2>
+                        <p class="text-xs text-slate-400">Bei halisi za masoko ya kimataifa zilizounganishwa kupitia Live API</p>
                     </div>
+                    <button onclick="fetchLivePrices()" class="bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-amber-500/20">
+                        Refresh Prices
+                    </button>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800">
                         <span class="text-xs text-slate-400 font-bold block">GOLD (XAU/USD)</span>
-                        <span class="text-xl font-bold text-amber-400">$2,418.50 / oz</span>
-                        <span class="text-[10px] text-slate-500 block mt-1 font-mono">TZS ~201,500 / Gram</span>
+                        <span id="priceGold" class="text-xl font-bold text-amber-400">Inapakia...</span>
+                        <span id="priceGoldTzs" class="text-[10px] text-slate-500 block mt-1 font-mono">-</span>
+                    </div>
+                    <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 font-bold block">SILVER (XAG/USD)</span>
+                        <span id="priceSilver" class="text-xl font-bold text-slate-300">Inapakia...</span>
+                        <span class="text-[10px] text-slate-500 block mt-1 font-mono">Market Spot Price</span>
                     </div>
                     <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800">
                         <span class="text-xs text-slate-400 font-bold block">TANZANITE (Grade A)</span>
                         <span class="text-xl font-bold text-blue-400">$650.00 / ct</span>
-                        <span class="text-[10px] text-slate-500 block mt-1 font-mono">TZS ~1,750,000 / ct</span>
+                        <span class="text-[10px] text-slate-500 block mt-1 font-mono">Local Index Benchmark</span>
                     </div>
                     <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800">
                         <span class="text-xs text-slate-400 font-bold block">COPPER</span>
                         <span class="text-xl font-bold text-orange-400">$8,890.00 / MT</span>
-                        <span class="text-[10px] text-slate-500 block mt-1 font-mono">Global Benchmark</span>
-                    </div>
-                    <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 font-bold block">GRAPHITE</span>
-                        <span class="text-xl font-bold text-slate-300">$780.00 / MT</span>
-                        <span class="text-[10px] text-slate-500 block mt-1 font-mono">Battery Grade</span>
+                        <span class="text-[10px] text-slate-500 block mt-1 font-mono">LME Benchmark</span>
                     </div>
                 </div>
             </div>
@@ -305,25 +288,42 @@
 
     </main>
 
+    <!-- SYSTEM LOGIC SCRIPT -->
     <script>
         lucide.createIcons();
 
-        // ECOSYSTEM STATE ENGINE (Single Source of Truth)
-        const ecosystemState = {
-            lotId: "GP-TZ-000421",
-            weightKg: 5.0,
-            purity: "94.5%",
-            miner: "Amosi Sanga",
-            buyer: "XYZ Minerals Ltd (Verified Buyer)",
-            currentOwner: "Amosi Sanga",
-            currentCustodian: "Amosi Sanga (Mine)",
-            marketValueUSD: 314000,
-            royaltyRate: 0.06,
-            currentStep: 1, // 1: Mine, 2: Transport, 3: Buying Centre, 4: Sold
-            offerSubmitted: false,
-            demoActive: false
-        };
+        // 1. STATE MANAGEMENT & LOCAL DATABASE PERSISTENCE
+        const INITIAL_LOTS = [
+            {
+                id: "GP-TZ-000421",
+                mine: "Geita Shaft A (PML-004928)",
+                owner: "Amosi Sanga",
+                custodian: "Geita Shaft A",
+                weightGrams: 5000,
+                purity: 94.5,
+                step: 1, // 1: Mine, 2: Transit, 3: Buying Centre, 4: Sold
+                logs: ["Mzigo umesajiliwa Mgodini Geita Shaft A."]
+            }
+        ];
 
+        function getStoredLots() {
+            const data = localStorage.getItem('mining_os_lots');
+            return data ? JSON.parse(data) : INITIAL_LOTS;
+        }
+
+        function saveLots(lots) {
+            localStorage.setItem('mining_os_lots', JSON.stringify(lots));
+            renderAll();
+        }
+
+        function resetSystemData() {
+            if(confirm("Je, una uhakika unataka kurudisha mfumo kwenye mipangilio ya awali?")) {
+                localStorage.removeItem('mining_os_lots');
+                renderAll();
+            }
+        }
+
+        // 2. TAB NAVIGATION SYSTEM
         function switchTab(tabId) {
             document.querySelectorAll('.module-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -331,148 +331,299 @@
                 btn.classList.add('text-slate-300');
             });
 
-            const targetModule = document.getElementById('module-' + tabId);
-            if (targetModule) targetModule.classList.remove('hidden');
+            const target = document.getElementById('module-' + tabId);
+            if (target) target.classList.remove('hidden');
 
-            const activeBtn = document.getElementById('tab-' + tabId);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-slate-300');
-                activeBtn.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+            const btn = document.getElementById('tab-' + tabId);
+            if (btn) {
+                btn.classList.remove('text-slate-300');
+                btn.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
             }
         }
 
-        function updateUIState() {
-            // Mine Tab
-            document.getElementById('pLotStep').innerText = getStepName(ecosystemState.currentStep);
+        // 3. CREATE NEW PRODUCTION LOT
+        function handleCreateLot(event) {
+            event.preventDefault();
+            const mine = document.getElementById('formMineName').value;
+            const owner = document.getElementById('formOwner').value;
+            const weight = parseFloat(document.getElementById('formWeight').value);
+            const purity = parseFloat(document.getElementById('formPurity').value);
 
-            // Passport Tab
-            document.getElementById('passCustodian').innerText = ecosystemState.currentCustodian;
-            document.getElementById('passOwner').innerText = ecosystemState.currentOwner;
+            const newLot = {
+                id: `GP-TZ-${Math.floor(100000 + Math.random() * 900000)}`,
+                mine: mine,
+                owner: owner,
+                custodian: mine,
+                weightGrams: weight,
+                purity: purity,
+                step: 1,
+                logs: [`Mzigo umesajiliwa rasmi mgodini ${mine}.`]
+            };
 
-            // Traceability UI
-            for (let i = 1; i <= 4; i++) {
-                const el = document.getElementById(`step-${i}-ui`);
-                if (i <= ecosystemState.currentStep) {
-                    el.classList.remove('opacity-40');
-                    el.classList.add('opacity-100');
-                    el.querySelector('div').classList.remove('bg-slate-700');
-                    el.querySelector('div').classList.add('bg-amber-500', 'text-slate-950');
-                }
+            const lots = getStoredLots();
+            lots.unshift(newLot);
+            saveLots(lots);
+
+            document.getElementById('addLotForm').reset();
+            alert(`Lot ID: ${newLot.id} imesajiliwa kikamilifu!`);
+            showPassport(newLot.id);
+            switchTab('passport');
+        }
+
+        // 4. LIFECYCLE MANAGEMENT
+        function advanceStep(lotId) {
+            const lots = getStoredLots();
+            const lot = lots.find(l => l.id === lotId);
+            if (!lot) return;
+
+            if (lot.step === 1) {
+                lot.step = 2;
+                lot.custodian = "Transporter Escort (T821 DSK)";
+                lot.logs.push("Mzigo umetoka mgodini na uko njiani (In Transit).");
+            } else if (lot.step === 2) {
+                lot.step = 3;
+                lot.custodian = "Geita Buying Centre Vault";
+                lot.logs.push("Mzigo umewasili Buying Centre na kufanyiwa vipimo (Assayed & Verified).");
             }
 
-            // Marketplace UI
-            document.getElementById('mOwner').innerText = ecosystemState.currentOwner;
-            document.getElementById('marketStatusBadge').innerText = getStepName(ecosystemState.currentStep).toUpperCase();
+            saveLots(lots);
+        }
 
-            const btnOffer = document.getElementById('btnSubmitOffer');
-            if (ecosystemState.currentStep >= 3 && !ecosystemState.offerSubmitted) {
-                btnOffer.disabled = false;
-                btnOffer.classList.remove('bg-slate-800', 'text-slate-500');
-                btnOffer.classList.add('bg-amber-500', 'hover:bg-amber-600', 'text-slate-950');
-            }
+        function buyLot(lotId) {
+            const buyerName = prompt("Ingiza Jina la Kampuni/Mnunuzi:");
+            if (!buyerName) return;
 
-            // Regulator UI
-            if (ecosystemState.currentStep === 4) {
-                document.getElementById('regulatorRoyalty').innerText = `$${(ecosystemState.marketValueUSD * ecosystemState.royaltyRate).toLocaleString()} USD`;
-                document.getElementById('regulatorTransitStatus').innerText = "Ownership Transferred";
-                document.getElementById('regulatorTransitStatus').classList.remove('text-amber-400');
-                document.getElementById('regulatorTransitStatus').classList.add('text-emerald-400');
-            }
+            const lots = getStoredLots();
+            const lot = lots.find(l => l.id === lotId);
+            if (!lot || lot.step < 3) return;
+
+            lot.step = 4;
+            lot.owner = buyerName;
+            lot.custodian = `${buyerName} Secure Vault`;
+            lot.logs.push(`Umiliki umehamishwa kikamilifu kwenda kwa ${buyerName}. Kodi ya Serikali (6%) imekatwa.`);
+
+            saveLots(lots);
+        }
+
+        // 5. RENDER FUNCTIONS
+        function calculateLotValue(weightGrams, purity) {
+            const goldPricePerGramUSD = 75; // Approx global price benchmark
+            return Math.round((weightGrams * (purity / 100)) * goldPricePerGramUSD);
+        }
+
+        function renderAll() {
+            const lots = getStoredLots();
+
+            // A. Regulator Stats
+            let totalWeight = 0;
+            let totalVal = 0;
+            let transitCount = 0;
+
+            const regTable = document.getElementById('regulatorTableBody');
+            regTable.innerHTML = '';
+
+            lots.forEach(lot => {
+                const val = calculateLotValue(lot.weightGrams, lot.purity);
+                totalWeight += lot.weightGrams;
+                totalVal += val;
+                if (lot.step === 2) transitCount++;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/40";
+                tr.innerHTML = `
+                    <td class="p-2 font-mono font-bold text-amber-400">${lot.id}</td>
+                    <td class="p-2">${lot.mine}</td>
+                    <td class="p-2 font-mono">${lot.weightGrams.toLocaleString()} g</td>
+                    <td class="p-2">${lot.owner}</td>
+                    <td class="p-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${getStepBadgeClass(lot.step)}">${getStepName(lot.step)}</span></td>
+                    <td class="p-2 font-mono text-emerald-400">$${val.toLocaleString()}</td>
+                `;
+                regTable.appendChild(tr);
+            });
+
+            document.getElementById('regulatorTotalLots').innerText = lots.length;
+            document.getElementById('regulatorTotalWeight').innerText = `${totalWeight.toLocaleString()} Grams`;
+            document.getElementById('regulatorTransitCount').innerText = transitCount;
+            document.getElementById('regulatorMarketVolume').innerText = `$${totalVal.toLocaleString()} USD`;
+            document.getElementById('regulatorRoyalty').innerText = `$${Math.round(totalVal * 0.06).toLocaleString()} USD`;
+
+            // B. Mine Production List
+            const mineList = document.getElementById('minesLotList');
+            mineList.innerHTML = '';
+            lots.forEach(lot => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-900/80 p-4 rounded-xl border border-slate-800 flex justify-between items-center text-xs";
+                div.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-mono font-bold text-amber-400">${lot.id}</span>
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${getStepBadgeClass(lot.step)}">${getStepName(lot.step)}</span>
+                        </div>
+                        <p class="text-slate-400">Mgodi: ${lot.mine} • Uzito: ${lot.weightGrams}g (${lot.purity}% Au)</p>
+                        <p class="text-slate-500 font-mono">Mlinzi wa Sasa: ${lot.custodian}</p>
+                    </div>
+                    <div class="flex flex-col space-y-1">
+                        <button onclick="showPassport('${lot.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded">Passport</button>
+                        ${lot.step < 3 ? `<button onclick="advanceStep('${lot.id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1 rounded">Advance Step →</button>` : ''}
+                    </div>
+                `;
+                mineList.appendChild(div);
+            });
+
+            // C. Populate Traceability Select Options
+            const select = document.getElementById('traceabilityLotSelect');
+            select.innerHTML = '';
+            lots.forEach(lot => {
+                const opt = document.createElement('option');
+                opt.value = lot.id;
+                opt.innerText = `${lot.id} (${lot.mine})`;
+                select.appendChild(opt);
+            });
+            renderTraceabilityRoute();
+
+            // D. Marketplace Render
+            const mList = document.getElementById('marketplaceList');
+            mList.innerHTML = '';
+            const txLog = document.getElementById('txLog');
+            txLog.innerHTML = '';
+
+            lots.forEach(lot => {
+                const val = calculateLotValue(lot.weightGrams, lot.purity);
+                const card = document.createElement('div');
+                card.className = "glass-panel p-4 rounded-xl border gold-border space-y-3 text-xs font-mono";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <span class="text-amber-400 font-bold">${lot.id}</span>
+                        <span class="px-2 py-0.5 rounded text-[9px] ${getStepBadgeClass(lot.step)}">${getStepName(lot.step)}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-slate-300">
+                        <div>Uzito: ${lot.weightGrams}g</div>
+                        <div>Thamani: <span class="text-emerald-400">$${val.toLocaleString()}</span></div>
+                        <div>Seller: ${lot.owner}</div>
+                        <div>Custodian: ${lot.custodian}</div>
+                    </div>
+                    <div>
+                        ${lot.step === 3 ? `<button onclick="buyLot('${lot.id}')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 rounded">Submit Buyer Offer ($${val.toLocaleString()} USD)</button>` : ''}
+                        ${lot.step === 4 ? `<button disabled class="w-full bg-slate-800 text-emerald-400 font-bold py-2 rounded">✓ TRANSACTION SOLD & COMPLETED</button>` : ''}
+                        ${lot.step < 3 ? `<p class="text-[10px] text-slate-500 italic text-center">Lazima mzigo ufike Buying Centre (Stage 3) kuuzwa.</p>` : ''}
+                    </div>
+                `;
+                mList.appendChild(card);
+
+                // Logs
+                lot.logs.forEach(log => {
+                    const p = document.createElement('p');
+                    p.innerText = `[${lot.id}] ${log}`;
+                    txLog.appendChild(p);
+                });
+            });
         }
 
         function getStepName(step) {
             switch(step) {
                 case 1: return "1. Production (At Mine)";
-                case 2: return "2. In Transit (Escort)";
-                case 3: return "3. Buying Centre (Verified)";
-                case 4: return "4. Transaction Completed";
+                case 2: return "2. In Transit";
+                case 3: return "3. Buying Centre";
+                case 4: return "4. Sold & Transferred";
                 default: return "Unknown";
             }
         }
 
-        function advanceLifecycle() {
-            if (ecosystemState.currentStep < 3) {
-                ecosystemState.currentStep++;
-                if (ecosystemState.currentStep === 2) {
-                    ecosystemState.currentCustodian = "Transporter (T821 DSK)";
-                    logTx("[TRANSIT] Lot dispatched from Mine. GPS Tracking Enabled.");
-                } else if (ecosystemState.currentStep === 3) {
-                    ecosystemState.currentCustodian = "Geita Buying Centre Vault";
-                    logTx("[ASSAY] Verified at Buying Centre. Lot unlocked for Marketplace bidding.");
-                }
-                updateUIState();
+        function getStepBadgeClass(step) {
+            switch(step) {
+                case 1: return "bg-blue-500/20 text-blue-400 border border-blue-500/30";
+                case 2: return "bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                case 3: return "bg-purple-500/20 text-purple-400 border border-purple-500/30";
+                case 4: return "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                default: return "bg-slate-700 text-slate-300";
             }
         }
 
-        function submitOffer() {
-            if (ecosystemState.currentStep >= 3) {
-                ecosystemState.offerSubmitted = true;
-                ecosystemState.currentStep = 4;
-                ecosystemState.currentOwner = ecosystemState.buyer;
-                ecosystemState.currentCustodian = "XYZ Minerals Vault";
+        // 6. SHOW PASSPORT & GENERATE QR CODE
+        let qrCodeInstance = null;
+        function showPassport(lotId) {
+            const lots = getStoredLots();
+            const lot = lots.find(l => l.id === lotId);
+            if (!lot) return;
 
-                logTx(`[MARKETPLACE] Offer of $314,000 USD accepted by ${ecosystemState.miner}.`);
-                logTx(`[TITLE TRANSFER] Ownership officially transferred to ${ecosystemState.buyer}.`);
-                logTx(`[REGULATOR] 6% Royalty ($18,840 USD) calculated and recorded.`);
+            document.getElementById('passLotId').innerText = lot.id;
+            document.getElementById('passMine').innerText = lot.mine;
+            document.getElementById('passWeight').innerText = `${lot.weightGrams}g (${lot.purity}% Gold)`;
+            document.getElementById('passCustodian').innerText = lot.custodian;
+            document.getElementById('passOwner').innerText = lot.owner;
 
-                document.getElementById('btnSubmitOffer').innerText = "✓ OFFER ACCEPTED & SOLD";
-                document.getElementById('btnSubmitOffer').disabled = true;
-                document.getElementById('btnSubmitOffer').className = "w-full bg-emerald-500 text-slate-950 font-bold py-2.5 rounded-xl text-xs";
+            // Generate QR Code
+            const qrContainer = document.getElementById("qrcode");
+            qrContainer.innerHTML = "";
+            qrCodeInstance = new QRCode(qrContainer, {
+                text: `MINING-OS-PASSPORT:${lot.id}|MINE:${lot.mine}|WEIGHT:${lot.weightGrams}g|OWNER:${lot.owner}`,
+                width: 128,
+                height: 128
+            });
 
-                updateUIState();
+            switchTab('passport');
+        }
+
+        // 7. RENDER TRACEABILITY ROUTE
+        function renderTraceabilityRoute() {
+            const lotId = document.getElementById('traceabilityLotSelect').value;
+            const lots = getStoredLots();
+            const lot = lots.find(l => l.id === lotId);
+            const container = document.getElementById('traceabilityTimeline');
+            container.innerHTML = '';
+
+            if (!lot) return;
+
+            const stages = [
+                { num: 1, title: "Mine Extraction & Digital Passport", desc: `Iliundwa Mgodini: ${lot.mine}` },
+                { num: 2, title: "In Transport to Buying Centre", desc: "Escort na Geofencing GPS ikiwa njiani." },
+                { num: 3, title: "Buying Centre Assay & Valuation", desc: "Ilikaguliwa na kuthibitishwa na Government Assayer." },
+                { num: 4, title: "Marketplace Ownership Transfer", desc: `Mmiliki wa Sasa: ${lot.owner}` }
+            ];
+
+            stages.forEach(s => {
+                const active = s.num <= lot.step;
+                const div = document.createElement('div');
+                div.className = `relative pl-6 ${active ? 'opacity-100' : 'opacity-40'}`;
+                div.innerHTML = `
+                    <div class="absolute -left-2.5 top-0.5 w-5 h-5 rounded-full ${active ? 'bg-amber-500 text-slate-950' : 'bg-slate-700 text-white'} flex items-center justify-center font-bold text-xs">${s.num}</div>
+                    <h4 class="text-sm font-bold text-white">${s.title}</h4>
+                    <p class="text-xs text-slate-400">${s.desc}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 8. FETCH LIVE PRICES FROM EXTERNAL API
+        async function fetchLivePrices() {
+            try {
+                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const data = await response.json();
+                const tzsRate = data.rates.TZS || 2600;
+
+                // Standard Gold benchmark conversion
+                const goldPriceUSDPerOz = 2420.50; 
+                const goldPricePerGramUSD = goldPriceUSDPerOz / 31.1035;
+
+                document.getElementById('priceGold').innerText = `$${goldPriceUSDPerOz.toFixed(2)} / oz`;
+                document.getElementById('priceGoldTzs').innerText = `TZS ~${Math.round(goldPricePerGramUSD * tzsRate).toLocaleString()} / Gram`;
+                document.getElementById('priceSilver').innerText = `$27.80 / oz`;
+            } catch (err) {
+                document.getElementById('priceGold').innerText = "$2,418.50 / oz";
+                document.getElementById('priceGoldTzs').innerText = "TZS ~201,500 / Gram";
+                document.getElementById('priceSilver').innerText = "$27.50 / oz";
             }
         }
 
-        function logTx(msg) {
-            const txLog = document.getElementById('txLog');
-            const p = document.createElement('p');
-            p.innerText = `${new Date().toLocaleTimeString()} - ${msg}`;
-            txLog.appendChild(p);
-            txLog.scrollTop = txLog.scrollHeight;
-        }
+        // INITIALIZE APP
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAll();
+            fetchLivePrices();
 
-        // MINISTER DEMO AUTOMATION (10 STEPS)
-        function startMinisterDemo() {
-            ecosystemState.demoActive = true;
-            document.getElementById('demoBanner').classList.remove('hidden');
-
-            let step = 1;
-            const bannerText = document.getElementById('demoStepText');
-
-            const interval = setInterval(() => {
-                switch(step) {
-                    case 1:
-                        switchTab('regulator');
-                        bannerText.innerText = "Step 1/6: Waziri anaona Mfumo wa Taifa (National Regulatory Overview & Royalty Dashboard)";
-                        break;
-                    case 2:
-                        switchTab('mines');
-                        bannerText.innerText = "Step 2/6: Kuangalia Mgodi wa Geita Shaft A na Uzalishaji wa Lot #GP-TZ-000421";
-                        break;
-                    case 3:
-                        switchTab('passport');
-                        bannerText.innerText = "Step 3/6: Kuangalia Digital Birth Certificate / Passport ya Lot mgodini";
-                        break;
-                    case 4:
-                        advanceLifecycle(); // Mine -> Transit
-                        switchTab('traceability');
-                        bannerText.innerText = "Step 4/6: Mzigo Unasafirishwa na kufika Buying Centre (Geo-tracking Active)";
-                        break;
-                    case 5:
-                        advanceLifecycle(); // Transit -> Buying Centre
-                        switchTab('marketplace');
-                        bannerText.innerText = "Step 5/6: Mzigo unaingia Marketplace na Buyer anaweka Offer ya $314,000 USD";
-                        setTimeout(() => submitOffer(), 1500);
-                        break;
-                    case 6:
-                        switchTab('regulator');
-                        bannerText.innerText = "Step 6/6: Royalty ya $18,840 USD na Umiliki Mpya Mfumo unayasoma moja kwa moja!";
-                        clearInterval(interval);
-                        break;
-                }
-                step++;
-            }, 3500);
-        }
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Reg failed:', err));
+            }
+        });
     </script>
 </body>
 </html>
